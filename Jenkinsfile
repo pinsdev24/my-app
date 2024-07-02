@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git 'https://github.com/pinsdev24/my-app.git'
+                git branch: 'main', url: 'https://github.com/pinsdev24/my-app.git'
             }
         }
         stage('Build Docker Image') {
@@ -16,7 +16,7 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    docker.withRegistry('https://registry.hub.docker.com',  'docker-hub-credentials') {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
                         docker.image('my-app').push('latest')
                     }
                 }
