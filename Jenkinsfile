@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    environment {
-        KUBECONFIG = credentials('kubeconfig')
-    }
     stages {
         stage('Clone Repository') {
             steps {
@@ -28,14 +25,7 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-                    sh '''
-                        # Debug information
-                        kubectl --kubeconfig="$KUBECONFIG" version --client
-                        kubectl --kubeconfig="$KUBECONFIG" get nodes
-        
-                        # Actual deployment
-                        kubectl --kubeconfig="$KUBECONFIG" apply -f k8s-deployment.yaml
-                    '''
+                    sh "kubectl apply -f k8s-deployment.yaml"
                 }
             }
         }
