@@ -27,15 +27,15 @@ pipeline {
         }
         stage('Deploy to Kubernetes') {
             steps {
-                script {
-                    sh """
-                        echo "KUBECONFIG: ${KUBECONFIG}"
-                        ls -l ${KUBECONFIG}
-                        kubectl version --client
-                        export KUBECONFIG=${KUBECONFIG}
-                        kubectl get nodes
-                        kubectl apply -f k8s-deployment.yaml
-                    """
+                withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+                    sh '''
+                        # Debug information
+                        kubectl --kubeconfig="$KUBECONFIG" version --client
+                        kubectl --kubeconfig="$KUBECONFIG" get nodes
+        
+                        # Actual deployment
+                        kubectl --kubeconfig="$KUBECONFIG" apply -f k8s-deployment.yaml
+                    '''
                 }
             }
         }
